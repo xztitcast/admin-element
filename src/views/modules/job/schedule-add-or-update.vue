@@ -10,8 +10,8 @@
       <el-form-item label="参数" prop="params">
         <el-input v-model="dataForm.params" placeholder="参数"></el-input>
       </el-form-item>
-      <el-form-item label="cron表达式" prop="cronExpression">
-        <el-input v-model="dataForm.cronExpression" placeholder="如: 0 0 12 * * ?"></el-input>
+      <el-form-item label="cron表达式" prop="cron">
+        <el-input v-model="dataForm.cron" placeholder="如: 0 0 12 * * ?"></el-input>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
@@ -33,7 +33,7 @@
           id: 0,
           beanName: '',
           params: '',
-          cronExpression: '',
+          cron: '',
           remark: '',
           status: 0
         },
@@ -41,7 +41,7 @@
           beanName: [
             { required: true, message: '用户名不能为空', trigger: 'blur' }
           ],
-          cronExpression: [
+          cron: [
             { required: true, message: 'cron表达式不能为空', trigger: 'blur' }
           ]
         }
@@ -60,11 +60,11 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.beanName = data.schedule.beanName
-                this.dataForm.params = data.schedule.params
-                this.dataForm.cronExpression = data.schedule.cronExpression
-                this.dataForm.remark = data.schedule.remark
-                this.dataForm.status = data.schedule.status
+                this.dataForm.beanName = data.result.beanName
+                this.dataForm.params = data.result.params
+                this.dataForm.cron = data.result.cron
+                this.dataForm.remark = data.result.remark
+                this.dataForm.status = data.result.status
               }
             })
           }
@@ -81,7 +81,7 @@
                 'jobId': this.dataForm.id || undefined,
                 'beanName': this.dataForm.beanName,
                 'params': this.dataForm.params,
-                'cronExpression': this.dataForm.cronExpression,
+                'cron': this.dataForm.cron,
                 'remark': this.dataForm.remark,
                 'status': !this.dataForm.id ? undefined : this.dataForm.status
               })

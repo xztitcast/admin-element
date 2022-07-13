@@ -72,10 +72,10 @@
     <el-pagination
       @size-change="sizeChangeHandle"
       @current-change="currentChangeHandle"
-      :current-page="pageIndex"
+      :current-page="pageNum"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
-      :total="totalPage"
+      :total="total"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
   </div>
@@ -89,9 +89,9 @@
           key: ''
         },
         dataList: [],
-        pageIndex: 1,
+        pageNum: 1,
         pageSize: 10,
-        totalPage: 0,
+        total: 0,
         dataListLoading: false,
         selectionDataList: []
       }
@@ -107,17 +107,17 @@
           url: this.$http.adornUrl('/sys/log/list'),
           method: 'get',
           params: this.$http.adornParams({
-            'page': this.pageIndex,
+            'page': this.pageNum,
             'limit': this.pageSize,
             'key': this.dataForm.key
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.dataList = data.result.pageList
+            this.total = data.result.total
           } else {
             this.dataList = []
-            this.totalPage = 0
+            this.total = 0
           }
           this.dataListLoading = false
         })
@@ -125,12 +125,12 @@
       // 每页数
       sizeChangeHandle (val) {
         this.pageSize = val
-        this.pageIndex = 1
+        this.pageNum = 1
         this.getDataList()
       },
       // 当前页
       currentChangeHandle (val) {
-        this.pageIndex = val
+        this.pageNum = val
         this.getDataList()
       }
     }

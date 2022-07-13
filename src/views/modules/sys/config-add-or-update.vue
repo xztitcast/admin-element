@@ -4,17 +4,17 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="150px">
-      <el-form-item label="参数（Key）键" prop="dKey">
-        <el-input v-model="dataForm.dKey" placeholder="参数（Key）键"></el-input>
+      <el-form-item label="参数(Name)名称" prop="paramName">
+        <el-input v-model="dataForm.paramName" placeholder="请输入参数(Name)名称"></el-input>
       </el-form-item>
-      <el-form-item label="参数（Name）名称" prop="dName">
-        <el-input v-model="dataForm.dName" placeholder="参数（Name）名称"></el-input>
+      <el-form-item label="参数(Key)键" prop="paramKey">
+        <el-input v-model="dataForm.paramKey" placeholder="请输入参数(Key)键"></el-input>
       </el-form-item>
-      <el-form-item label="参数（Value）值" prop="dValue">
-        <el-input v-model="dataForm.dValue" placeholder="参数（Value）值"></el-input>
+      <el-form-item label="参数（Value）值" prop="paramVal">
+        <el-input v-model="dataForm.paramVal" placeholder="请输入参数(Value)值"></el-input>
       </el-form-item>
-      <el-form-item label="备注" prop="descr">
-        <el-input v-model="dataForm.descr" placeholder="备注"></el-input>
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -31,17 +31,20 @@
         visible: false,
         dataForm: {
           id: 0,
-          dKey: '',
-          dName: '',
-          dValue: '',
-          descr:''
+          paramKey: '',
+          paramName: '',
+          paramVal: '',
+          remark:''
         },
         dataRule: {
-          dKey: [
-            { required: true, message: '参数（Key）键不能为空', trigger: 'blur' }
+          paramName:[
+            { required: true, message: '参数(Name)名称不能为空', trigger: 'blur' }
           ],
-          dValue: [
-            { required: true, message: '参数（Value）值不能为空', trigger: 'blur' }
+          paramKey: [
+            { required: true, message: '参数(Key)键不能为空', trigger: 'blur' }
+          ],
+          paramVal: [
+            { required: true, message: '参数(Value)值不能为空', trigger: 'blur' }
           ]
         }
       }
@@ -54,15 +57,15 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/dataDict/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.dKey = data.result.dkey
-                this.dataForm.dName = data.result.dname
-                this.dataForm.dValue = data.result.dvalue
-                this.dataForm.descr = data.result.descr
+                this.dataForm.paramKey = data.result.paramKey
+                this.dataForm.paramName = data.result.paramName
+                this.dataForm.paramVal = data.result.paramVal
+                this.dataForm.remark = data.result.remark
               }
             })
           }
@@ -73,14 +76,14 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/dataDict/addOrUpdate`),
+              url: this.$http.adornUrl(`/sys/config/${!this.dataForm.id ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
-                'dkey': this.dataForm.dKey,
-                'dname': this.dataForm.dName,
-                'dvalue': this.dataForm.dValue,
-                'descr': this.dataForm.descr
+                'paramKey': this.dataForm.paramKey,
+                'paramName': this.dataForm.paramName,
+                'paramVal': this.dataForm.paramVal,
+                'remark': this.dataForm.remark
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

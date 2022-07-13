@@ -7,7 +7,7 @@
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <!-- <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button> -->
+        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -30,31 +30,31 @@
         label="ID">
       </el-table-column>
       <el-table-column
-        prop="dkey"
+        prop="paramKey"
         header-align="center"
         align="center"
         label="参数（Key）键">
       </el-table-column>
       <el-table-column
-        prop="dname"
+        prop="paramName"
         header-align="center"
         align="center"
         label="参数（Name）名称">
       </el-table-column>
       <el-table-column
-        prop="dvalue"
+        prop="paramVal"
         header-align="center"
         align="center"
         label="参数（Value）值">
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="created"
         header-align="center"
         align="center"
         label="创建时间">
       </el-table-column>
       <el-table-column
-        prop="descr"
+        prop="remark"
         header-align="center"
         align="center"
         label="备注">
@@ -67,17 +67,17 @@
         label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <!-- <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button> -->
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"
       @current-change="currentChangeHandle"
-      :current-page="pageIndex"
+      :current-page="pageNum"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
-      :total="totalPage"
+      :total="total"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
@@ -94,9 +94,9 @@
           paramKey: ''
         },
         dataList: [],
-        pageIndex: 1,
+        pageNum: 1,
         pageSize: 10,
-        totalPage: 0,
+        total: 0,
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false
@@ -113,20 +113,20 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/dataDict/list'),
+          url: this.$http.adornUrl('/sys/config/list'),
           method: 'get',
           params: this.$http.adornParams({
-            'pageNum': this.pageIndex,
+            'pageNum': this.pageNum,
             'pageSize': this.pageSize,
-            'dKey': this.dataForm.paramKey
+            'paramKey': this.dataForm.paramKey
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.dataList = data.result.records
-            this.totalPage = data.result.total
+            this.dataList = data.result.pageList
+            this.total = data.result.total
           } else {
             this.dataList = []
-            this.totalPage = 0
+            this.total = 0
           }
           this.dataListLoading = false
         })
@@ -134,12 +134,12 @@
       // 每页数
       sizeChangeHandle (val) {
         this.pageSize = val
-        this.pageIndex = 1
+        this.pageNum = 1
         this.getDataList()
       },
       // 当前页
       currentChangeHandle (val) {
-        this.pageIndex = val
+        this.pageNum = val
         this.getDataList()
       },
       // 多选
