@@ -66,7 +66,7 @@
       :current-page="pageNum"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
-      :total="totalPage"
+      :total="total"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
@@ -85,7 +85,7 @@
         dataList: [],
         pageNum: 1,
         pageSize: 10,
-        totalPage: 0,
+        total: 0,
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false
@@ -112,10 +112,10 @@
         }).then(({data}) => {
           if (data && data.code === 0) {
             this.dataList = data.result.pageList
-            this.totalPage = data.result.total
+            this.total = data.result.total
           } else {
             this.dataList = []
-            this.totalPage = 0
+            this.total = 0
           }
           this.dataListLoading = false
         })
