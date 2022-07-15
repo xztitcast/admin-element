@@ -59,17 +59,25 @@ http.adornParams = (params = {}, openDefultParams = true) => {
 /**
  * post请求数据处理
  * @param {*} data 数据对象
- * @param {*} openDefultdata 是否开启默认数据?
  * @param {*} contentType 数据格式
  *  json: 'application/json; charset=utf-8'
  *  form: 'application/x-www-form-urlencoded; charset=utf-8'
  */
 http.adornData = (data = {}, openDefultdata = false, contentType = 'json') => {
-  var defaults = {
-    't': new Date().getTime()
+  if(contentType === 'form'){
+    let form = new FormData()
+    for(var i = 0;i < data.length; i++){
+      form.append(data[i].key, data[i].value)
+    }
+    http.defaults.headers['Content-Type'] = 'multipart/form-data'
+    return form
   }
-  data = openDefultdata ? merge(defaults, data) : data
-  return contentType === 'json' ? JSON.stringify(data) : qs.stringify(data)
+  if(contentType === 'urlencoded'){
+    http.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    return qs.stringify(data)
+  }
+  http.defaults.headers['Content-Type'] = 'application/json; charset=utf-8'
+  return JSON.stringify(data)
 }
 
 export default http
