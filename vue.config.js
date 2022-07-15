@@ -25,8 +25,7 @@ module.exports = {
     port: 8900,
     proxy: {
       '/sys': {
-        //  target: 'http://localhost:8080'
-         target: (process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'http://admin.tzsci.cn')
+         target: 'http://localhost:8080'
       }
     },
     overlay: {
