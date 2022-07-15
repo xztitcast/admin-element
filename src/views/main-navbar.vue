@@ -2,8 +2,8 @@
   <nav class="site-navbar" :class="'site-navbar--' + navbarLayoutType">
     <div class="site-navbar__header">
       <h1 class="site-navbar__brand" @click="$router.push({ name: 'home' })">
-        <a class="site-navbar__brand-lg" href="javascript:;">Fil生态后台管理</a>
-        <a class="site-navbar__brand-mini" href="javascript:;">Fil</a>
+        <a class="site-navbar__brand-lg" href="javascript:;">滔滔后台管理</a>
+        <a class="site-navbar__brand-mini" href="javascript:;">滔</a>
       </h1>
     </div>
     <div class="site-navbar__body clearfix">
@@ -31,8 +31,8 @@
         </el-menu-item>
         <el-submenu index="3">
           <template slot="title">Git源码</template>
-          <el-menu-item index="2-1"><a href="http://119.136.32.123:12000/xswenhua/fil-admin" target="_blank">前端</a></el-menu-item>
-          <el-menu-item index="2-2"><a href="http://119.136.32.123:12000/xswenhua/fil-ecology" target="_blank">后台</a></el-menu-item>
+          <el-menu-item index="2-1"><a href="" target="_blank">前端</a></el-menu-item>
+          <el-menu-item index="2-2"><a href="" target="_blank">后台</a></el-menu-item>
         </el-submenu>
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
