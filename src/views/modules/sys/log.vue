@@ -13,6 +13,36 @@
       border
       v-loading="dataListLoading"
       style="width: 100%">
+	  <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-form label-position="left" class="log-table-expand">
+            <el-form-item label="ID">
+              <span>{{scope.row.id}}</span>
+            </el-form-item>
+            <el-form-item label="用户名">
+              <span>{{scope.row.username}}</span>
+            </el-form-item>
+            <el-form-item label="用户操作">
+              <span>{{scope.row.operation}}</span>
+            </el-form-item>
+            <el-form-item label="请求方法">
+              <span>{{scope.row.method}}</span>
+            </el-form-item>
+            <el-form-item label="请求参数">
+              <span>{{scope.row.params}}</span>
+            </el-form-item>
+            <el-form-item label="执行时长(毫秒)">
+              <span>{{scope.row.time}}</span>
+            </el-form-item>
+            <el-form-item label="IP地址">
+              <span>{{scope.row.ip}}</span>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <span>{{scope.row.created}}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="id"
         header-align="center"
@@ -136,3 +166,17 @@
     }
   }
 </script>
+<style>
+  .log-table-expand {
+    font-size: 0;
+  }
+  .log-table-expand label {
+    width: 200px;
+    color: #99a9bf;
+  }
+  .log-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 100%;
+  }
+</style>
