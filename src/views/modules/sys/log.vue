@@ -62,7 +62,7 @@
         label="IP地址">
       </el-table-column>
       <el-table-column
-        prop="createDate"
+        prop="created"
         header-align="center"
         align="center"
         width="180"
@@ -107,8 +107,8 @@
           url: this.$http.adornUrl('/sys/log/list'),
           method: 'get',
           params: this.$http.adornParams({
-            'page': this.pageNum,
-            'limit': this.pageSize,
+            'pageNum': this.pageNum,
+            'pageSize': this.pageSize,
             'key': this.dataForm.key
           })
         }).then(({data}) => {
