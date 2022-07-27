@@ -57,9 +57,9 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
+              url: `/sys/config/info/${this.dataForm.id}`,
               method: 'get',
-              params: this.$http.adornParams()
+              params: this.$http.params()
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.dataForm.paramKey = data.result.paramKey
@@ -76,9 +76,9 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: `/sys/config/${!this.dataForm.id ? 'save' : 'update'}`,
               method: 'post',
-              data: this.$http.adornData({
+              data: this.$http.JSON({
                 'id': this.dataForm.id || undefined,
                 'paramKey': this.dataForm.paramKey,
                 'paramName': this.dataForm.paramName,

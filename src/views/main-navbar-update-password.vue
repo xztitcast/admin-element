@@ -78,9 +78,9 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl('/sys/user/password'),
+              url: '/sys/user/password',
               method: 'post',
-              data: this.$http.adornData({
+              data: this.$http.JSON({
                 'password': this.dataForm.password,
                 'newPassword': this.dataForm.newPassword
               })

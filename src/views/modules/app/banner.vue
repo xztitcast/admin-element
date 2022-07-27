@@ -1,13 +1,9 @@
 <template>
-  <div class="mod-config">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-      <el-form-item>
-        <el-input v-model="dataForm.paramKey" placeholder="参数（Key）键" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+  <div class="mod-banner">
+    <el-form :inline="true" :model="dataForm">
+        <el-form-item>
+          <el-button v-if="isAuth('sys:banner:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+          <el-button v-if="isAuth('sys:banner:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,29 +19,37 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="id"
+        prop="url"
         header-align="center"
         align="center"
-        width="80"
-        label="ID">
+        label="banner图片">
+        <template slot-scope="scope">
+          <div>
+            <img :src="scope.row.url" width="120">
+          </div>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="paramKey"
+        prop="content"
         header-align="center"
         align="center"
-        label="参数（Key）键">
+        label="图片内容">
       </el-table-column>
       <el-table-column
-        prop="paramName"
+        prop="isShow"
         header-align="center"
         align="center"
-        label="参数（Name）名称">
+        label="是否展示">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isShow">是</el-tag>
+          <el-tag v-else>否</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="paramVal"
+        prop="sortNum"
         header-align="center"
         align="center"
-        label="参数（Value）值">
+        label="排序">
       </el-table-column>
       <el-table-column
         prop="created"
@@ -54,20 +58,14 @@
         label="创建时间">
       </el-table-column>
       <el-table-column
-        prop="remark"
-        header-align="center"
-        align="center"
-        label="备注">
-      </el-table-column>
-      <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button v-if="isAuth('sys:banner:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('sys:banner:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -80,19 +78,16 @@
       :total="total"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './config-add-or-update'
+  import AddOrUpdate from './banner-add-or-update'
   export default {
     data () {
       return {
-        dataForm: {
-          paramKey: ''
-        },
+        dataForm: {},
         dataList: [],
         pageNum: 1,
         pageSize: 10,
@@ -105,7 +100,7 @@
     components: {
       AddOrUpdate
     },
-    activated () {
+    activated() {
       this.getDataList()
     },
     methods: {
@@ -113,12 +108,11 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/config/list'),
+          url: '/sys/banner/list',
           method: 'get',
-          params: this.$http.adornParams({
+          params: this.$http.params({
             'pageNum': this.pageNum,
             'pageSize': this.pageSize,
-            'paramKey': this.dataForm.paramKey
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -164,9 +158,9 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/config/delete'),
+            url: '/sys/banner/delete',
             method: 'post',
-            data: this.$http.adornData(ids, false)
+            data: this.$http.JSON(ids)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({

@@ -1,5 +1,7 @@
-# renren-fast-vue
-
+## admin-element
+```
+java 后台管理页面（前后端分离模式）
+```
 ## Project setup
 ```
 npm install

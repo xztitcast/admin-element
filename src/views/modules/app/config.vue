@@ -1,13 +1,13 @@
 <template>
-  <div class="mod-role">
+  <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="dataForm.paramKey" placeholder="参数（Key）键" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,17 +23,35 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
         width="80"
         label="ID">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="paramKey"
         header-align="center"
         align="center"
-        label="角色名称">
+        label="参数（Key）键">
+      </el-table-column>
+      <el-table-column
+        prop="paramName"
+        header-align="center"
+        align="center"
+        label="参数（Name）名称">
+      </el-table-column>
+      <el-table-column
+        prop="paramVal"
+        header-align="center"
+        align="center"
+        label="参数（Value）值">
+      </el-table-column>
+      <el-table-column
+        prop="created"
+        header-align="center"
+        align="center"
+        label="创建时间">
       </el-table-column>
       <el-table-column
         prop="remark"
@@ -42,21 +60,14 @@
         label="备注">
       </el-table-column>
       <el-table-column
-        prop="created"
-        header-align="center"
-        align="center"
-        width="180"
-        label="创建时间">
-      </el-table-column>
-      <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,12 +86,12 @@
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
+  import AddOrUpdate from './config-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
-          roleName: ''
+          paramKey: ''
         },
         dataList: [],
         pageNum: 1,
@@ -102,12 +113,12 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: '/sys/role/list',
+          url: '/sys/config/list',
           method: 'get',
           params: this.$http.params({
             'pageNum': this.pageNum,
             'pageSize': this.pageSize,
-            'roleName': this.dataForm.roleName
+            'paramKey': this.dataForm.paramKey
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -145,7 +156,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.roleId
+          return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
@@ -153,7 +164,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: '/sys/role/delete',
+            url: '/sys/config/delete',
             method: 'post',
             data: this.$http.JSON(ids)
           }).then(({data}) => {

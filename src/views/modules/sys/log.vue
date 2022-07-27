@@ -7,6 +7,26 @@
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
       </el-form-item>
+      <el-form-item>
+        <div class="block">
+          <el-date-picker
+            v-model="dataForm.dateArray"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+        </div>
+      </el-form-item>
+      <el-form-item>
+        <el-tooltip class="item" effect="light" placement="top-start">
+            <div slot="content" style="fontWeight:Bold;color:#FFA042;font-size:16px">提示：导出请选择日期,如不填写日期范围将导出当天内的前一个月内的数据</div>
+            <el-button v-if="isAuth('sys:log:excel')" @click="exportDataList()">导出</el-button>
+        </el-tooltip>
+      </el-form-item>
     </el-form>
     <el-table
       :data="dataList"
@@ -116,7 +136,38 @@
     data () {
       return {
         dataForm: {
-          key: ''
+          key: '',
+          dateArray: []
+        },
+        pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          },
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
         },
         dataList: [],
         pageNum: 1,
@@ -134,9 +185,9 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/log/list'),
+          url: '/sys/log/list',
           method: 'get',
-          params: this.$http.adornParams({
+          params: this.$http.params({
             'pageNum': this.pageNum,
             'pageSize': this.pageSize,
             'key': this.dataForm.key
@@ -162,6 +213,28 @@
       currentChangeHandle (val) {
         this.pageNum = val
         this.getDataList()
+      },
+      // 日志导出功能(demo)
+      exportDataList () {
+        this.$exportExcel('/sys/log/excel', {
+            'start': this.dataForm.dateArray.length == 0 ? null : this.dataForm.dateArray[0],
+            'end': this.dataForm.dateArray.length == 0 ? null : this.dataForm.dateArray[1]
+        }).then(res => {
+            const blob = new Blob([res.data])
+            let fileName = 'log数据统计.xlsx'
+            if('download' in document.createElement('a')) { // 非IE下载
+                const elink = document.createElement('a')
+                elink.download = fileName
+                elink.style.display = 'none'
+                elink.href = URL.createObjectURL(blob)
+                document.body.appendChild(elink)
+                elink.click()
+                URL.revokeObjectURL(elink.href)
+                document.body.removeChild(elink)
+            } else { // IE10+下载
+                navigator.msSaveBlob(blob, fileName)
+            }
+        }).catch(error => {})
       }
     }
   }

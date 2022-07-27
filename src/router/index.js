@@ -6,7 +6,7 @@
  */
 import Vue from 'vue'
 import Router from 'vue-router'
-import http from '@/utils/httpRequest'
+import http from '@/utils/request'
 import { isURL } from '@/utils/validate'
 import { clearLoginInfo } from '@/utils'
 
@@ -39,7 +39,7 @@ const mainRoutes = {
     //{ path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } }
   ],
   beforeEnter (to, from, next) {
-    let token = Vue.cookie.get('jwt')
+    let token = Vue.cookie.get('token')
     if (!token || !/\S/.test(token)) {
       clearLoginInfo()
       next({ name: 'login' })
@@ -63,9 +63,9 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     http({
-      url: http.adornUrl('/sys/menu/nav'),
+      url: '/sys/menu/nav',
       method: 'get',
-      params: http.adornParams()
+      params: http.params()
     }).then(({data}) => {
       if (data && data.code === 0) {
         fnAddDynamicMenuRoutes(data.menuList)
@@ -111,7 +111,7 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = [], modules = '') {
   var parentURL = ''
   for (var i = 0; i < menuList.length; i++) {
     if (menuList[i].list && menuList[i].list.length >= 1) {
-	  parentURL = menuList[i].url
+	    parentURL = menuList[i].url
       temp = temp.concat(menuList[i].list)
     } else if (menuList[i].url && /\S/.test(menuList[i].url)) {
       menuList[i].url = menuList[i].url.replace(/^\//, '')
@@ -134,14 +134,14 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = [], modules = '') {
         route['meta']['iframeUrl'] = menuList[i].url
       } else {
         try {
-          route['component'] = modules == ''? _import(`${parentURL}`) || _import(`${modules}/${menuList[i].url}`)
+          route['component'] = modules == '' ? _import(`${parentURL}`) :  _import(`${modules}/${menuList[i].url}`)
         } catch (e) {}
       }
       routes.push(route)
     }
   }
   if (temp.length >= 1) {
-    fnAddDynamicMenuRoutes(temp, routes)
+    fnAddDynamicMenuRoutes(temp, routes, parentURL)
   } else {
     mainRoutes.name = 'main-dynamic'
     mainRoutes.children = routes

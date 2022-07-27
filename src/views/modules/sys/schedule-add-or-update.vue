@@ -55,9 +55,9 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/schedule/info/${this.dataForm.id}`),
+              url: `/sys/schedule/info/${this.dataForm.id}`,
               method: 'get',
-              params: this.$http.adornParams()
+              params: this.$http.params()
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.dataForm.beanName = data.result.beanName
@@ -75,9 +75,9 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/schedule/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: `/sys/schedule/${!this.dataForm.id ? 'save' : 'update'}`,
               method: 'post',
-              data: this.$http.adornData({
+              data: this.$http.JSON({
                 'jobId': this.dataForm.id || undefined,
                 'beanName': this.dataForm.beanName,
                 'params': this.dataForm.params,

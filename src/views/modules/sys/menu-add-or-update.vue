@@ -14,7 +14,7 @@
       </el-form-item>
       <el-form-item label="上级菜单" prop="parentName">
         <el-popover
-		  v-model="menuVisble"
+		      v-model="menuVisible"
           ref="menuListPopover"
           placement="bottom-start"
           trigger="click">
@@ -37,14 +37,14 @@
       <el-form-item v-if="dataForm.type === 2" label="授权标识" prop="perms">
         <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔, 如: user:list,user:create"></el-input>
       </el-form-item>
-      <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="orderNum">
-        <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0" label="排序号"></el-input-number>
+      <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="sortNum">
+        <el-input-number v-model="dataForm.sortNum" controls-position="right" :min="0" label="排序号"></el-input-number>
       </el-form-item>
       <el-form-item v-if="dataForm.type >= 0" label="菜单图标" prop="icon">
         <el-row>
           <el-col :span="22">
             <el-popover
-			  v-model="iconVisible"
+			        v-model="iconVisible"
               ref="iconListPopover"
               placement="bottom-start"
               trigger="click"
@@ -87,8 +87,8 @@
       }
       return {
         visible: false,
-		menuVisible: false,
-		iconVisible: false,
+		    menuVisible: false,
+		    iconVisible: false,
         dataForm: {
           id: 0,
           type: 1,
@@ -98,7 +98,7 @@
           parentName: '',
           url: '',
           perms: '',
-          orderNum: 0,
+          sortNum: 0,
           icon: '',
           iconList: []
         },
@@ -127,9 +127,9 @@
       init (id) {
         this.dataForm.id = id || 0
         this.$http({
-          url: this.$http.adornUrl('/sys/menu/select'),
+          url: '/sys/menu/select',
           method: 'get',
-          params: this.$http.adornParams()
+          params: this.$http.params()
         }).then(({data}) => {
           this.menuList = treeDataTranslate(data.menuList, 'menuId')
         }).then(() => {
@@ -144,11 +144,9 @@
           } else {
             // 修改
             this.$http({
-              url: this.$http.adornUrl('/sys/menu/info'),
+              url: `/sys/menu/info/${this.dataForm.id}`,
               method: 'get',
-              params: this.$http.adornParams({
-                'menuId': this.dataForm.id
-              })
+              params: this.$http.params()
             }).then(({data}) => {
               this.dataForm.id = data.menu.menuId
               this.dataForm.type = data.menu.type
@@ -156,7 +154,7 @@
               this.dataForm.parentId = data.menu.parentId
               this.dataForm.url = data.menu.url
               this.dataForm.perms = data.menu.perms
-              this.dataForm.orderNum = data.menu.orderNum
+              this.dataForm.sortNum = data.menu.sortNum
               this.dataForm.icon = data.menu.icon
               this.menuListTreeSetCurrentNode()
             })
@@ -167,7 +165,7 @@
       menuListTreeCurrentChangeHandle (data, node) {
         this.dataForm.parentId = data.menuId
         this.dataForm.parentName = data.name
-		this.menuVisble = false
+		    this.menuVisible = false
       },
       // 菜单树设置当前选中节点
       menuListTreeSetCurrentNode () {
@@ -177,23 +175,23 @@
       // 图标选中
       iconActiveHandle (iconName) {
         this.dataForm.icon = iconName
-		this.iconVisible = false
+		    this.iconVisible = false
       },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/menu/${this.dataForm.id ? 'update' : 'save'}`),
+              url: '/sys/menu/saveOrUpdate',
               method: 'post',
-              data: this.$http.adornData({
+              data: this.$http.JSON({
                 'menuId': this.dataForm.id || undefined,
                 'type': this.dataForm.type,
                 'name': this.dataForm.name,
                 'parentId': this.dataForm.parentId,
                 'url': this.dataForm.url,
                 'perms': this.dataForm.perms,
-                'orderNum': this.dataForm.orderNum,
+                'sortNum': this.dataForm.sortNum,
                 'icon': this.dataForm.icon
               })
             }).then(({data}) => {

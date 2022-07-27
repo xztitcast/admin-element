@@ -8,7 +8,7 @@ import '@/element-ui'
 import '@/icons'
 import '@/element-ui-theme'
 import '@/assets/scss/index.scss'
-import httpRequest from '@/utils/httpRequest'
+import request from '@/utils/request'
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // 挂载全局
-Vue.prototype.$http = httpRequest
+Vue.prototype.$http = request
 Vue.prototype.isAuth = isAuth
 Vue.prototype.$exportExcel = exportExcel
 

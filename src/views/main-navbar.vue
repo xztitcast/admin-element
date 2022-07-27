@@ -96,9 +96,8 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/logout'),
-            method: 'post',
-            data: this.$http.adornData()
+            url: '/sys/logout',
+            method: 'post'
           }).then(({data}) => {
             if (data && data.code === 0) {
               clearLoginInfo()

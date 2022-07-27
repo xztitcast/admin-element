@@ -44,7 +44,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="orderNum"
+        prop="sortNum"
         header-align="center"
         align="center"
         label="排序号">
@@ -105,9 +105,9 @@ export default {
     getDataList () {
       this.dataListLoading = true
       this.$http({
-        url: this.$http.adornUrl('/sys/menu/list'),
+        url: '/sys/menu/list',
         method: 'get',
-        params: this.$http.adornParams()
+        params: this.$http.params()
       }).then(({ data }) => {
         this.dataList = treeDataTranslate(data, 'menuId')
         this.dataListLoading = false
@@ -128,9 +128,9 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$http({
-          url: this.$http.adornUrl(`/sys/menu/delete`),
+          url: '/sys/menu/delete',
           method: 'post',
-          data: this.$http.adornData({
+          data: this.$http.JSON({
             'id' : id
           })
         }).then(({ data }) => {

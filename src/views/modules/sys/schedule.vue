@@ -127,9 +127,9 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/schedule/list'),
+          url: '/sys/schedule/list',
           method: 'get',
-          params: this.$http.adornParams({
+          params: this.$http.params({
             'page': this.pageNum,
             'limit': this.pageSize,
             'beanName': this.dataForm.beanName
@@ -178,9 +178,9 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/schedule/delete'),
+            url: '/sys/schedule/delete',
             method: 'post',
-            data: this.$http.adornData(ids, false)
+            data: this.$http.JSON(ids)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
@@ -208,9 +208,9 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/schedule/pause'),
+            url: '/sys/schedule/pause',
             method: 'post',
-            data: this.$http.adornData(ids, false)
+            data: this.$http.JSON(ids)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
@@ -238,9 +238,9 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/schedule/resume'),
+            url: '/sys/schedule/resume',
             method: 'post',
-            data: this.$http.adornData(ids, false)
+            data: this.$http.JSON(ids)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
@@ -268,9 +268,9 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/schedule/run'),
+            url: '/sys/schedule/run',
             method: 'post',
-            data: this.$http.adornData(ids, false)
+            data: this.$http.JSON(ids)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({

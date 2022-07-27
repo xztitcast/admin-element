@@ -1,13 +1,9 @@
 <template>
-  <div class="mod-role">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+  <div class="mod-version">
+    <el-form :inline="true" :model="dataForm">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('sys:version:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('sys:version:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,29 +19,67 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
         width="80"
         label="ID">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="v"
         header-align="center"
         align="center"
-        label="角色名称">
+        label="版本号">
+      </el-table-column>
+      <el-table-column
+        prop="isCompel"
+        header-align="center"
+        align="center"
+        label="是否强升">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isCompel === 1" size="mini" type="danger" effect="plain">是</el-tag>
+          <el-tag v-else size="mini" effect="plain">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="status"
+        header-align="center"
+        align="center"
+        label="是否上架">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 1" size="mini" type="success" effect="plain">是</el-tag>
+          <el-tag v-else size="mini" type="warning" effect="plain">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="platform"
+        header-align="center"
+        align="center"
+        label="平台">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.platform === 1" size="mini" effect="plain">安卓</el-tag>
+          <el-tag v-else-if="scope.row.platform === 2" size="mini" type="success" effect="plain">IOS</el-tag>
+          <el-tag v-else size="mini" type="danger" effect="plain">其他</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="url"
+        header-align="center"
+        align="center"
+        label="下载链接"
+        show-overflow-tooltip="">
       </el-table-column>
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
-        label="备注">
+        label="说明"
+        show-overflow-tooltip="">
       </el-table-column>
       <el-table-column
         prop="created"
         header-align="center"
         align="center"
-        width="180"
         label="创建时间">
       </el-table-column>
       <el-table-column
@@ -55,8 +89,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button v-if="isAuth('sys:version:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button v-if="isAuth('sys:version:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,18 +103,17 @@
       :total="total"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
+  import AddOrUpdate from "./version-add-or-update"
   export default {
     data () {
       return {
         dataForm: {
-          roleName: ''
+
         },
         dataList: [],
         pageNum: 1,
@@ -102,12 +135,11 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: '/sys/role/list',
+          url: '/sys/version/list',
           method: 'get',
           params: this.$http.params({
             'pageNum': this.pageNum,
-            'pageSize': this.pageSize,
-            'roleName': this.dataForm.roleName
+            'pageSize': this.pageSize
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -145,7 +177,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.roleId
+          return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
@@ -153,7 +185,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: '/sys/role/delete',
+            url: '/sys/version/delete',
             method: 'post',
             data: this.$http.JSON(ids)
           }).then(({data}) => {
