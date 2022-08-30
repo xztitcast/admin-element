@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="sortNum"
+        prop="sorted"
         header-align="center"
         align="center"
         label="排序">

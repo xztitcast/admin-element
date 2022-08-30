@@ -2,7 +2,8 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
+    :visible.sync="visible"
+    @close="bannerDialogCloseHandler">
     <el-form
       ref="dataForm"
       label-width="120px"
@@ -12,6 +13,7 @@
       @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="banner图片" prop="url">
          <el-upload
+          ref="bannerUploadForm"
           class="avatar-uploader"
           :action="upload.action"
           :headers="upload.header"
@@ -32,8 +34,8 @@
           <el-radio :label="false">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="排序" prop="sortNum">
-        <el-input-number v-model="dataForm.sortNum" controls-position="right" :min="1" placeholder="输入排序"></el-input-number>
+      <el-form-item label="排序" prop="sorted">
+        <el-input-number v-model="dataForm.sorted" controls-position="right" :min="1" placeholder="输入排序"></el-input-number>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -53,7 +55,7 @@
           url: '',
           content: '',
           isShow: false,
-          sortNum: 1
+          sorted: 1
         },
         dataRule: {
 
@@ -81,7 +83,7 @@
                 this.dataForm.url = data.result.url
                 this.dataForm.content = data.result.content
                 this.dataForm.isShow = data.result.isShow
-                this.dataForm.sortNum = data.result.sortNum
+                this.dataForm.sorted = data.result.sorted
               }
             })
           }
@@ -118,6 +120,9 @@
         }
         return isJPG && isLt2M;
       },
+      bannerDialogCloseHandler(){
+        this.$refs['bannerUploadForm'].clearFiles()
+      },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
@@ -130,7 +135,7 @@
                 'url': this.dataForm.url,
                 'content': this.dataForm.content,
                 'isShow': this.dataForm.isShow,
-                'sortNum': this.dataForm.sortNum
+                'sorted': this.dataForm.sorted
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
