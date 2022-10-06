@@ -37,8 +37,8 @@
       <el-form-item v-if="dataForm.type === 2" label="授权标识" prop="perms">
         <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔, 如: user:list,user:create"></el-input>
       </el-form-item>
-      <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="sortNum">
-        <el-input-number v-model="dataForm.sortNum" controls-position="right" :min="0" label="排序号"></el-input-number>
+      <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="sorted">
+        <el-input-number v-model="dataForm.sorted" controls-position="right" :min="0" label="排序号"></el-input-number>
       </el-form-item>
       <el-form-item v-if="dataForm.type >= 0" label="菜单图标" prop="icon">
         <el-row>
@@ -98,7 +98,7 @@
           parentName: '',
           url: '',
           perms: '',
-          sortNum: 0,
+          sorted: 0,
           icon: '',
           iconList: []
         },
@@ -154,7 +154,7 @@
               this.dataForm.parentId = data.menu.parentId
               this.dataForm.url = data.menu.url
               this.dataForm.perms = data.menu.perms
-              this.dataForm.sortNum = data.menu.sortNum
+              this.dataForm.sorted = data.menu.sorted
               this.dataForm.icon = data.menu.icon
               this.menuListTreeSetCurrentNode()
             })
@@ -191,7 +191,7 @@
                 'parentId': this.dataForm.parentId,
                 'url': this.dataForm.url,
                 'perms': this.dataForm.perms,
-                'sortNum': this.dataForm.sortNum,
+                'sorted': this.dataForm.sorted,
                 'icon': this.dataForm.icon
               })
             }).then(({data}) => {
